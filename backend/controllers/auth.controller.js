@@ -3,12 +3,12 @@ import pool from "../db.js";
 import jwtGenerator from "../services-utilities/jwtGenerator.js";
 
 class AuthController {
-    static async signup(req, res) {
+    async signup(req, res) {
         const { surname, name, paternal, email, password } = req.body;
 
         try {
             const user = await pool.query(
-                "SELECT * FROM users WHERE email = $1",
+                "SELECT * FROM users WHERE user_email = $1",
                 [email]
             );
 
@@ -24,7 +24,7 @@ class AuthController {
             const hashedPassword = await bcrypt.hash(password, salt);
 
             const newUser = await pool.query(
-                "INSERT INTO users (surname, name, paternal, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+                "INSERT INTO users (user_surname, user_name, user_paternal, user_email, user_password) VALUES ($1, $2, $3, $4, $5) RETURNING *",
                 [surname, name, paternal, email, hashedPassword]
             );
 
@@ -37,12 +37,12 @@ class AuthController {
         };
     };
 
-    static async login(req, res) {
+    async login(req, res) {
         const { email, password } = req.body;
 
         try {
             const user = await pool.query(
-                "SELECT * FROM users WHERE email = $1",
+                "SELECT * FROM users WHERE user_email = $1",
                 [email]
             );
 
@@ -52,7 +52,7 @@ class AuthController {
 
             const isValid = await bcrypt.compare(
                 password,
-                user.rows[0].password
+                user.rows[0].user_password
             );
 
             if (!isValid) {
@@ -68,7 +68,7 @@ class AuthController {
         };
     };
 
-    static async verify(req, res) {
+    async verify(req, res) {
         try {
             res.json(true);
         } catch (err) {

@@ -1,10 +1,10 @@
 import pool from "../db.js";
 
 class TasksController {
-    static async getAllTasks(req, res) {
+    async getAllTasks(req, res) {
         try {
             const allTasks = await pool.query(
-                "SELECT FROM tasks WHERE task_creator = $1 OR task_responsible = $1",
+                "SELECT * FROM tasks WHERE task_creator = $1 OR task_responsible = $1",
                 [req.user.id]
             );
 
@@ -19,7 +19,7 @@ class TasksController {
         };
     };
 
-    static async getOneTask(req, res) {
+    async getOneTask(req, res) {
         const taskId = req.params.id;
 
         try {
@@ -39,17 +39,17 @@ class TasksController {
         };
     };
 
-    static async createTask(req, res) {
-        const { title, desc, priority, status, created, updated, finished, responsible } = req.body;
+    async createTask(req, res) {
+        const { title, desc, priority, status, created, updated, deadline, responsible } = req.body;
 
-        if (!title || !desc || !priority || !status || !created || !updated || !finished || !responsible) {
+        if (!title || !desc || !priority || !status || !created || !updated || !deadline || !responsible) {
             return res.status(500).json({ error: true, message: "Введены не все данные" });
         };
 
         try {
             const createdTask = await pool.query(
                 "INSERT INTO tasks (task_title, task_desc, task_priority, task_status, task_created, task_updated, task_finished, task_creator, task_responsible) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
-                [title, desc, priority, status, created, updated, finished, req.user.id, responsible]
+                [title, desc, priority, status, created, updated, deadline, req.user.id, responsible]
             );
 
             if (createdTask.rows.length === 0) {
@@ -63,15 +63,15 @@ class TasksController {
         };
     };
 
-    static async updateTask(req, res) {
+    async updateTask(req, res) {
         const taskId = req.params.id;
 
-        const { title, desc, priority, status, updated, finished, responsible } = req.body;
+        const { title, desc, priority, status, updated, deadline, responsible } = req.body;
 
         try {
             const updatedTask = await pool.query(
                 "UPDATE tasks SET task_title = $1, task_desc = $2, task_priority = $3, task_status = $4, task_updated = $5, task_finished = $6, task_responsible = $7 WHERE task_id = $8 RETURNING *",
-                [title, desc, priority, status, updated, finished, responsible, taskId]
+                [title, desc, priority, status, updated, deadline, responsible, taskId]
             );
 
             if (updatedTask.rows.length === 0) {
@@ -85,7 +85,7 @@ class TasksController {
         };
     };
 
-    static async deleteTask(req, res) {
+    async deleteTask(req, res) {
         const taskId = req.params.id;
 
         try {
@@ -93,10 +93,6 @@ class TasksController {
                 "DELETE FROM tasks WHERE task_id = $1 RETURNING *",
                 [taskId]
             );
-
-            if (deletedTask.rows.length > 0) {
-                return res.status(500).json({ error: true, message: "Не удалось удалить задачу" });
-            };
 
             return res.status(200).json({ error: false, message: "Задача удалена" });
         } catch (err) {

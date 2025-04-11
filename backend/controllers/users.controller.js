@@ -1,7 +1,7 @@
 import pool from "../db.js";
 
 class UsersController {
-    static async getAllUsers(req, res) {
+    async getAllUsers(req, res) {
         try {
             const allUsers = await pool.query(
                 "SELECT * FROM users",
@@ -19,7 +19,7 @@ class UsersController {
         };
     };
 
-    static async getOneUser(req, res) {
+    async getOneUser(req, res) {
         const userId = req.params.id;
 
         try {
@@ -39,17 +39,17 @@ class UsersController {
         };
     };
 
-    static async updateUser(req, res) {
+    async updateUser(req, res) {
         const { surname, name, paternal, email } = req.body;
 
         try {
             const updatedUser = await pool.query(
-                "UPDATE users SET surname = $1, name = $2, paternal = $3, email = $4 WHERE user_id = $5 RETURNING *",
+                "UPDATE users SET user_surname = $1, user_name = $2, user_paternal = $3, user_email = $4 WHERE user_id = $5 RETURNING *",
                 [surname, name, paternal, email, req.user.id]
             );
 
             if (updatedUser.rows.length === 0) {
-                return res.status(500).json({ error: true, message: "Невозможно обновить задачу" });
+                return res.status(500).json({ error: true, message: "Невозможно обновить пользователя" });
             };
 
             return res.status(200).json({ error: false, updatedUser: updatedUser.rows[0] });
@@ -59,7 +59,7 @@ class UsersController {
         };
     };
 
-    static async setChief(req, res) {
+    async setChief(req, res) {
         const { chiefId } = req.body;
 
         try {
@@ -79,16 +79,12 @@ class UsersController {
         };
     };
 
-    static async deleteUser(req, res) {
+    async deleteUser(req, res) {
         try {
             const deletedUser = await pool.query(
                 "DELETE FROM users WHERE user_id = $1 RETURNING *",
                 [req.user.id]
             );
-
-            if (deletedUser.rows.length > 0) {
-                return res.status(500).json({ error: true, message: "Невозможно удалить пользователя" });
-            };
 
             return res.status(200).json({ error: false, message: "Пользователь удалён" });
         } catch (err) {
