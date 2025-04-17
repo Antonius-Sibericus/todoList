@@ -1,33 +1,41 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Link,
+  Navigate
+} from "react-router-dom";
+import './App.css';
+
+import Dashboard from './pages/Dashboard.page';
+import Login from './pages/Login.page';
+import Signup from './pages/Signup.page';
+import NotFound from './pages/NotFound.page';
+
+export const AuthContext = React.createContext();
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isInSystem, setIsInSystem] = React.useState(false);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <AuthContext.Provider value={{ isInSystem, setIsInSystem }}>
+        <Routes>
+          <Route
+            path='/login'
+            element={!isInSystem ? <Login setIsInSystem={setIsInSystem} /> : <Navigate to='/' />}></Route>
+          <Route
+            path='/signup'
+            element={!isInSystem ? <Signup setIsInSystem={setIsInSystem} /> : <Navigate to='/' />}></Route>
+          <Route
+            path='/'
+            element={isInSystem ? <Dashboard setIsInSystem={setIsInSystem} /> : <Navigate to='/login' />}></Route>
+          <Route
+            path='*'
+            element={<NotFound />}></Route>
+        </Routes>
+      </AuthContext.Provider>
     </>
   )
 }
