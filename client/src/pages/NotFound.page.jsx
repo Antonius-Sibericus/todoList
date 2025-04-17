@@ -7,6 +7,7 @@ import {
     Navigate
 } from "react-router-dom";
 import { AuthContext } from '../App';
+import styles from "./pages.module.scss";
 
 export default function NotFound() {
     const { isInSystem, setIsInSystem } = React.useContext(AuthContext);
@@ -21,5 +22,5 @@ export default function NotFound() {
                 Log In or Log Out
             </button>
         </>
-    )
-}
+    );
+};

@@ -7,8 +7,10 @@ import {
     Navigate
 } from "react-router-dom";
 import { AuthContext } from '../App';
+import Signup from '../components/signup/Signup.component';
+import styles from "./pages.module.scss";
 
-export default function Signup() {
+export default function SignupPage() {
     const { isInSystem, setIsInSystem } = React.useContext(AuthContext);
 
     return (
@@ -20,5 +22,5 @@ export default function Signup() {
                 Log In or Log Out
             </button>
         </>
-    )
-}
+    );
+};

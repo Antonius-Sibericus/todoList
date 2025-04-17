@@ -7,8 +7,10 @@ import {
     Navigate
 } from "react-router-dom";
 import { AuthContext } from '../App';
+import Login from '../components/login/Login.component';
+import styles from "./pages.module.scss";
 
-export default function Login() {
+export default function LoginPage() {
     const { isInSystem, setIsInSystem } = React.useContext(AuthContext);
 
     return (
@@ -19,6 +21,7 @@ export default function Login() {
             <button onClick={() => setIsInSystem(prev => !prev)}>
                 Log In or Log Out
             </button>
+            <Login />
         </>
-    )
-}
+    );
+};

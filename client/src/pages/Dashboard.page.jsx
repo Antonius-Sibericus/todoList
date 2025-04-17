@@ -7,8 +7,10 @@ import {
     Navigate
 } from "react-router-dom";
 import { AuthContext } from '../App';
+import Dashboard from '../components/dashboard/Dashboard.component';
+import styles from "./pages.module.scss";
 
-export default function Dashboard() {
+export default function DashboardPage() {
     const { isInSystem, setIsInSystem } = React.useContext(AuthContext);
 
     return (
@@ -19,6 +21,7 @@ export default function Dashboard() {
             <button onClick={() => setIsInSystem(prev => !prev)}>
                 Log In or Log Out
             </button>
+            <Dashboard />
         </>
-    )
-}
+    );
+};

@@ -6,16 +6,16 @@ import {
   Link,
   Navigate
 } from "react-router-dom";
-import './App.css';
+import styles from './app.module.scss';
 
-import Dashboard from './pages/Dashboard.page';
-import Login from './pages/Login.page';
-import Signup from './pages/Signup.page';
+import DashboardPage from './pages/Dashboard.page';
+import LoginPage from './pages/Login.page';
+import SignupPage from './pages/Signup.page';
 import NotFound from './pages/NotFound.page';
 
 export const AuthContext = React.createContext();
 
-function App() {
+export default function App() {
   const [isInSystem, setIsInSystem] = React.useState(false);
 
   return (
@@ -24,20 +24,18 @@ function App() {
         <Routes>
           <Route
             path='/login'
-            element={!isInSystem ? <Login setIsInSystem={setIsInSystem} /> : <Navigate to='/' />}></Route>
+            element={!isInSystem ? <LoginPage /> : <Navigate to='/' />}></Route>
           <Route
             path='/signup'
-            element={!isInSystem ? <Signup setIsInSystem={setIsInSystem} /> : <Navigate to='/' />}></Route>
+            element={!isInSystem ? <SignupPage /> : <Navigate to='/' />}></Route>
           <Route
             path='/'
-            element={isInSystem ? <Dashboard setIsInSystem={setIsInSystem} /> : <Navigate to='/login' />}></Route>
+            element={isInSystem ? <DashboardPage /> : <Navigate to='/login' />}></Route>
           <Route
             path='*'
             element={<NotFound />}></Route>
         </Routes>
       </AuthContext.Provider>
     </>
-  )
-}
-
-export default App
+  );
+};
